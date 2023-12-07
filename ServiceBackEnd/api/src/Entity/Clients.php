@@ -23,6 +23,9 @@ class Clients
     private ?string $adresse_mail = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $mot_de_passe = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $numero_telephone = null;
 
     public function getId(): ?int
@@ -62,6 +65,18 @@ class Clients
     public function setAdresseMail(string $adresse_mail): static
     {
         $this->adresse_mail = $adresse_mail;
+
+        return $this;
+    }
+
+    public function getMotDePasse(): ?string
+    {
+        return $this->mot_de_passe;
+    }
+
+    public function setMotDePasse(string $mot_de_passe): static
+    {
+        $this->mot_de_passe = $mot_de_passe;
 
         return $this;
     }
