@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  api:
+    image: httpd:latest
+    networks:
+      - XYZHotelBack
+
+  mysql:
+    image: mysql:latest
+    networks:
+      - XYZHotelBack
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: XYZHotel
+      MYSQL_ROOT_PASSWORD: root
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    networks:
+      - XYZHotelBack
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+
+  XYZAdminHub:
+    image: httpd:latest
+    networks:
+      - XYZHotelFront
+
+  XYZUserHub:
+    image: httpd:latest
+    networks:
+      - XYZHotelFront
+
+networks:
+  XYZHotelBack:
+    external: false
+  XYZHotelFront:
+    external: false
+
