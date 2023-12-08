@@ -67,10 +67,9 @@ class ClientsController extends AbstractController
     public function createClient(Request $request, EntityManagerInterface $entityManager): Response
     {
         $jsonData = $request->getContent();
-
         $data = json_decode($jsonData, true);
 
-        if (!isset($data['nom']) || !isset($data['prenom']) || !isset($data['email']) || !isset($data['telephone'])) {
+        if (!isset($data['nom']) || !isset($data['prenom']) || !isset($data['email']) || !isset($data['telephone']) || !isset($data['mot_de_passe'])) {
             return new JsonResponse(['message' => 'Toutes les informations requises doivent être fournies.'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -79,6 +78,9 @@ class ClientsController extends AbstractController
         $client->setPrenom($data['prenom']);
         $client->setAdresseMail($data['email']);
         $client->setNumeroTelephone($data['telephone']);
+
+        $hashedPassword = password_hash($data['mot_de_passe'], PASSWORD_BCRYPT);
+        $client->setMotDePasse($hashedPassword);
 
         try {
             $entityManager->persist($client);
@@ -91,24 +93,28 @@ class ClientsController extends AbstractController
     }
 
     #[Route('/clients/{id}', name: 'updateClient', methods: ['PUT'])]
-    public function updateClient(Clients $clients, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function updateClient(Clients $client, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        if (!$clients) {
+        if (!$client) {
             return new JsonResponse(['message' => 'Client non trouvé.'], Response::HTTP_NOT_FOUND);
         }
 
         $jsonData = $request->getContent();
-
         $data = json_decode($jsonData, true);
 
         if (!isset($data['nom']) || !isset($data['prenom']) || !isset($data['email']) || !isset($data['telephone'])) {
             return new JsonResponse(['message' => 'Toutes les informations requises doivent être fournies.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $clients->setNom($data['nom']);
-        $clients->setPrenom($data['prenom']);
-        $clients->setAdresseMail($data['email']);
-        $clients->setNumeroTelephone($data['telephone']);
+        $client->setNom($data['nom']);
+        $client->setPrenom($data['prenom']);
+        $client->setAdresseMail($data['email']);
+        $client->setNumeroTelephone($data['telephone']);
+
+        if (isset($data['mot_de_passe'])) {
+            $hashedPassword = password_hash($data['mot_de_passe'], PASSWORD_BCRYPT);
+            $client->setMotDePasse($hashedPassword);
+        }
 
         try {
             $entityManager->flush();
