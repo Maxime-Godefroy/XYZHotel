@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}XYZ Hotel{% endblock %}</title>
+        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+        <link rel="icon" href={{ asset("images/icon_XYZHotel.png") }}>
+        
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+            <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{{ path('app_home') }}">
+                        <img src={{ asset("images/icon_XYZHotel.png") }} width="30" height="30" class="d-inline-block align-top" alt="logo">
+                        XYZHotel
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarColor01">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">Home
+                                    <span class="visually-hidden">(current)</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Features</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Pricing</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Separated link</a>
+                                </div>
+                            </li>
+                        </ul>
+                        {% if  app.session.get('user') %}
+                            <div class="dropdown">
+                                <button class="badge rounded-pill text-bg-dark btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> 
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                    {% set user = app.session.get('user') %}
+                                    <li class="dropdown-header">{{ user['prenom'] }} {{ user['nom'] }}</li>
+                                    <div class="dropdown-divider"></div>
+                                    <li><a class="dropdown-item" href="{{ path('app_compte') }}">Mon compte</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_deconnexion') }}">Déconnexion</a></li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <form class="d-flex" action="{{ path('app_connexion') }}" method="post">
+                                <button class="badge rounded-pill text-bg-dark btn btn-dark" type="submit">
+                                    <i class="fas fa-user"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        {% endblock %}
+    </body>
+</html>

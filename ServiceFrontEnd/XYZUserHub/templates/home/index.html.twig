@@ -1,0 +1,28 @@
+{% block body %}
+
+    {% include 'header.html.twig' %}
+    
+    <div class="card mb-3" style="max-width: 70%; margin: auto;">
+        <img src="{{ asset('images/devanture.png') }}" class="d-block user-select-none" width="100%" height="100%" alt="devanture">
+        <div class="card-body">
+            <p class="card-text">
+                L'XYZ Hôtel vous accueille avec des options d'hébergement qui combinent confort et élégance à des prix compétitifs. Choisissez notre chambre standard pour une escale économique, ou optez pour la supérieure pour un confort accru. Pour le summum du luxe, notre suite vous enveloppe dans l'exclusivité et la détente. Quel que soit votre choix, XYZ Hôtel promet une expérience mémorable. 
+            </p>
+        </div>
+    </div>
+
+    <div class="container" style="margin: auto;">
+        <div class="row">
+        {% for item in data %}
+            <div class="col card mb-3">
+                <h3 class="card-header">{{ item.categorie }}</h3>
+                <img src="{{ asset('images/' ~ item.categorie ~ '.png') }}" class="d-block user-select-none" width="100%" height="300em" alt="{{ item.categorie }}">
+                <div class="card-body">
+                    <p class="card-text">
+                        {{ item.caracteristiques }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    <div>
+{% endblock %}
