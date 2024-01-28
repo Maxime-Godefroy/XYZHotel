@@ -7,18 +7,19 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class ApiService
 {
     private $client;
+    private $url;
 
     public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
+        $this->url = 'http://127.0.0.1:8000/';
     }
 
     public function get($route = null, $id = null)
     {
-        if ($route == null) {
-            $url = 'http://127.0.0.1:8000';
-        } else {
-            $url = 'http://127.0.0.1:8000/'.$route;
+        $url = $this->url;
+        if ($route != null) {
+            $url .= $route;
             if ($id != null) {
                 $url .= "/".$id;
             }
@@ -30,6 +31,24 @@ class ApiService
             return $response->toArray();
         }
 
+        return null;
+    }
+
+    public function post($route, $data)
+    {
+        $url = $this->url . $route;
+    
+        $response = $this->client->request('POST', $url, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+            'body' => json_encode($data),
+        ]);
+    
+        if ($response->getStatusCode() === 200) {
+            return $response->toArray();
+        }
+    
         return null;
     }
 }

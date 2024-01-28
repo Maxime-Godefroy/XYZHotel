@@ -3,6 +3,10 @@
 namespace App\Controller;
 
 use App\Service\ApiService;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,12 +67,62 @@ class HomeController extends AbstractController
     }
 
     #[Route('/inscription', name: 'app_inscription')]
-    public function inscription(ApiService $apiService): Response
+    public function inscription(Request $request, ApiService $apiService)
     {
-        $data = $apiService->get();
+        $form = $this->createFormBuilder()
+            ->add('nom', TextType::class, [
+                'required' => true,
+            ])
+            ->add('prenom', TextType::class, [
+                'required' => true,
+            ])
+            ->add('email', EmailType::class, [
+                'required' => true,
+            ])
+            ->add('telephone', TelType::class, [
+                'required' => true,
+            ])
+            ->add('mot_de_passe', PasswordType::class, [
+                'required' => true,
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $userExist = false;
+            $users = $apiService->get('clients');
+
+            foreach ($users as $user) {
+
+                if ($user['adresseMail'] == $data['email']) {
+                    $this->addFlash('error', 'Cet email est déjà utilisé.');
+                    $userExist = true;
+                }
+            }
+
+            if (!$userExist) {
+                $apiService->post('clients', $data);
+
+                $session = $request->getSession();
+                $session->set('user', $data);
+
+                $users = $apiService->get('clients');
+
+                foreach ($users as $user) {
+                    if ($user['adresseMail'] == $data['email']) {
+                        $apiService->post('comptes_clients', ['client_id'=>$user['id'], 'solde_portefeuille'=>0, 'devise'=>'EUR']);
+                    }
+                }
+
+                return $this->redirectToRoute('app_home');
+            }
+        }
+
         return $this->render('home/inscription.html.twig', [
+            'form' => $form->createView(),
             'controller_name' => 'HomeController',
-            'data' => $data,
         ]);
     }
 
