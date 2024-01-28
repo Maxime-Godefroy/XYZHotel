@@ -20,7 +20,6 @@ class HomeController extends AbstractController
         $session = $request->getSession();
         $user = $session->get('user');
 
-        //dd($user);
         $data = $apiService->get();
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
@@ -137,15 +136,30 @@ class HomeController extends AbstractController
     }
 
     #[Route('/compte', name: 'app_compte')]
-    public function compte(Request $request): Response
+    public function compte(ApiService $apiService, Request $request): Response
     {
         $session = $request->getSession();
         if (!$session->has('user')) {
             return $this->redirectToRoute('app_home');
         }
-
+        
+        $data = $apiService->get("comptes_clients", $session->get('user')['id']);
+        
+        if ($request->isMethod('POST')) {
+            $montant = floatval($request->request->get('montant'));
+            $devise = $request->request->get('devise');
+    
+            $putData = [
+                'montant' => $montant,
+                'devise' => $devise,
+            ];
+    
+            $apiService->put("comptes_clients", $session->get('user')['id'], $putData);
+        }
+    
         return $this->render('home/compte.html.twig', [
             'controller_name' => 'HomeController',
+            'data' => $data,
         ]);
     }
 }

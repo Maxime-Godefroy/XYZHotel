@@ -1,0 +1,17 @@
+{% block body %}
+
+    {% include 'header.html.twig' %}
+
+    <div class="container">
+        {% for item in data %}
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <img src="{{ asset('images/' ~ item.categorie ~ '.png') }}" class="col-auto d-none d-lg-block" width="100%" height="300em" alt="{{ item.categorie }}">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <h1 class="display-4 fst-italic">{{ item.categorie }}</h1>
+                    <p class="lead my-3">{{ item.caracteristiques }}</p>
+                    <p class="lead mb-0"><a href="" class="text-body fw-bold">Réserver</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

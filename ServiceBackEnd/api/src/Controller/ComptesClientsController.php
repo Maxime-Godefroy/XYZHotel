@@ -100,7 +100,7 @@ class ComptesClientsController extends AbstractController
 
 
     #[Route('/comptes_clients/{id}', name: 'updateCompteClient', methods: ['PUT'])]
-    public function updateCompteClient(ComptesClients $compteClient, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function updateCompteClient(ComptesClients $compteClient, Request $request, EntityManagerInterface $entityManager, ExchangeRateService $exchangeRateService): JsonResponse
     {
         if (!$compteClient) {
             return new JsonResponse(['message' => 'Compte client non trouvé.'], Response::HTTP_NOT_FOUND);
@@ -109,18 +109,23 @@ class ComptesClientsController extends AbstractController
         $jsonData = $request->getContent();
         $data = json_decode($jsonData, true);
 
-        if (!isset($data['client_id']) || !isset($data['solde_portefeuille'])) {
+        if (!isset($data['solde_portefeuille']) || !isset($data['devise'])) {
             return new JsonResponse(['message' => 'Toutes les informations requises doivent être fournies.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $client = $entityManager->getRepository(Clients::class)->find($data['client_id']);
+        $client_id = $request->get('client_id');
+        $client = $entityManager->getRepository(Clients::class)->find($client_id);
 
         if (!$client) {
             return new JsonResponse(['message' => 'Client non trouvé.'], Response::HTTP_NOT_FOUND);
         }
 
+        $soldeEuros = $exchangeRateService->convertToEuro($data['solde_portefeuille'], $data['devise']);
+        $soldeActuel = $compteClient->getSoldePortefeuille();
+        $nouveauSolde = $soldeActuel + $soldeEuros;
+
         $compteClient->setClient($client);
-        $compteClient->setSoldePortefeuille($data['solde_portefeuille']);
+        $compteClient->setSoldePortefeuille($nouveauSolde);
 
         try {
             $entityManager->flush();
