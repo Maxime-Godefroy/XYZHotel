@@ -1,34 +1,38 @@
 XYZ Hôtel - Système de Gestion des Réservations
+
 💽 Installation
+
 🔌 Backend
 
-    Premier Terminal :
+Premier Terminal :
 
-docker compose up
+```bash
+    docker compose up
+```
 
 Deuxième Terminal :
 
-bash
-
+```bash
     cd .\ServiceBackEnd\api\
     symfony serve
+```
 
 💡 Frontend
 
-    Troisième Terminal :
+Troisième Terminal :
 
-    bash
-
-cd .\ServiceFrontEnd\XYZUserHub\
-symfony serve
+```bash
+    cd .\ServiceFrontEnd\XYZUserHub\
+    symfony serve
+```
 
 Quatrième Terminal :
 
-arduino
-
+```bash
     cd .\ServiceFrontEnd\XYZUserHub\
     npm run watch
-
+```
+    
 🍳 Login
 
     Créez votre propre compte pour accéder au système.
