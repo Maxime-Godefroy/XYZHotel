@@ -113,8 +113,7 @@ class ComptesClientsController extends AbstractController
             return new JsonResponse(['message' => 'Toutes les informations requises doivent être fournies.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $client_id = $request->get('client_id');
-        $client = $entityManager->getRepository(Clients::class)->find($client_id);
+        $client = $compteClient->getClient();;
 
         if (!$client) {
             return new JsonResponse(['message' => 'Client non trouvé.'], Response::HTTP_NOT_FOUND);

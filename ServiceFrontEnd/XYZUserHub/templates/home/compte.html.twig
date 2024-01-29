@@ -2,10 +2,10 @@
 
     {% include 'header.html.twig' %}
 
-    <div class="card" style="max-width: 70%; margin: auto;">
+    <div class="card" style="max-width: 80%; margin: auto;">
         <div class="card-body">
             <h4 class="card-title">Portefeuille</h4>
-            <p class="card-text">Votre solde est de {{ data.soldePortefeuille }} €</p>
+            <p class="card-text">Votre solde est de {{ solde.soldePortefeuille }} €</p>
             <form method="post" action="{{ path('app_compte') }}">
                 <div class="form-group">
                     <label class="form-label mt-4">Montant</label>
@@ -30,6 +30,53 @@
             </form>
         </div>
     </div>
+
+    <table class="table table-hover" style="max-width: 80%; margin: 50px auto;">
+        <thead>
+            <tr>
+                <th scope="col">Chambre</th>
+                <th scope="col">Date de réservation</th>
+                <th scope="col">Nombre(s) de nuits(s)</th>
+                <th scope="col">Statut</th>
+                {% set showActions = false %}
+                {% for reservation in userReservations %}
+                    {% if reservation.statut != 'Confirmé' %}
+                        {% set showActions = true %}
+                        <th scope="col">Action</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in userReservations %}
+                <tr>
+                    <th scope="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ reservation.chambre.categorie }}</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">Capacité de la chambre : {{ reservation.chambre.capacite }}</h6>
+                                <p class="card-text">{{ reservation.chambre.caracteristiques }}</p>
+                            </div>
+                        </div>
+                    </th>
+                    <td>{{ reservation.dateCheckin|date('d-m-Y') }}</td>
+                    <td>{{ reservation.nombreNuits }}</td>
+                    <td>{{ reservation.statut }}</td>
+                    {% if showActions %}
+                        {% if reservation.statut != 'Confirmé' %}
+                            <td>
+                                <form method="post" action="{{ path('app_confirm_reservation', {'id': reservation.id}) }}">
+                                    <button type="submit" class="btn btn-primary">Confirmer</button>
+                                </form>
+                            </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 
 {% endblock %}

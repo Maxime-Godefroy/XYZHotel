@@ -243,7 +243,7 @@ class ReservationsController extends AbstractController
         }
 
         $compteClient->setSoldePortefeuille($compteClient->getSoldePortefeuille() - $montantRestant);
-        $reservation->setStatut('Confirmée');
+        $reservation->setStatut('Confirmé');
 
         try {
             $entityManager->flush();

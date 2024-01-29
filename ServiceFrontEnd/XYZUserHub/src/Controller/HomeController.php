@@ -143,23 +143,58 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
         
-        $data = $apiService->get("comptes_clients", $session->get('user')['id']);
+        $solde = $apiService->get("comptes_clients", $session->get('user')['id']);
         
         if ($request->isMethod('POST')) {
             $montant = floatval($request->request->get('montant'));
             $devise = $request->request->get('devise');
     
             $putData = [
-                'montant' => $montant,
+                'solde_portefeuille' => $montant,
                 'devise' => $devise,
             ];
     
             $apiService->put("comptes_clients", $session->get('user')['id'], $putData);
+            return $this->redirectToRoute('app_compte');
         }
+
+        $reservations = $apiService->get("reservations");
+
+        $userId = $session->get('user')['id'];
+
+        $userReservations = array_filter($reservations, function ($reservation) use ($userId) {
+            return $reservation['client']['id'] === $userId;
+        });
+        
+        foreach ($userReservations as $reservation) {
+            if (isset($reservation['reservation']) && isset($reservation['chambre'])) {
+                $reservation['reservation']['chambre'] = $reservation['chambre'];
+            }
+        }
+        
+        $chambresReservees = $apiService->get("chambres_reservees");
+
+        foreach ($userReservations as &$reservation) {
+            foreach ($chambresReservees as $chambreReservee) {
+                if ($chambreReservee['reservation']['id'] === $reservation['id']) {
+                    $reservation['chambre'] = $chambreReservee['chambre'];
+                    break;
+                }
+            }
+        }
+        unset($reservation);
     
         return $this->render('home/compte.html.twig', [
             'controller_name' => 'HomeController',
-            'data' => $data,
+            'solde' => $solde,
+            'userReservations' => $userReservations,
         ]);
+    }
+
+    #[Route('/compte_confirm/{id}', name: 'app_confirm_reservation', methods: ['POST'])]
+    public function confirm($id, ApiService $apiService)
+    {
+        $apiService->put("reservations_confirmer", $id);
+        return $this->redirectToRoute('app_compte');
     }
 }
