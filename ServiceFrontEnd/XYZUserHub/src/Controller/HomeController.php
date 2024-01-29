@@ -34,18 +34,18 @@ class HomeController extends AbstractController
         if ($request->isMethod('POST')) {
             $email = $request->request->get('adresseMail');
             $password = $request->request->get('motDePasse');
-        
+
             if (!empty($email)) {
                 $clients = $apiService->get('clients');
                 $userFound = false;
-        
+
                 foreach ($clients as $client) {
                     if ($client['adresseMail'] === $email) {
                         $userFound = true;
                         if (password_verify($password, $client['motDePasse'])) {
                             $session = $request->getSession();
                             $session->set('user', $client);
-        
+
                             return $this->redirectToRoute('app_home');
                         } else {
                             $this->addFlash('error', 'Mot de passe incorrect');
@@ -53,7 +53,7 @@ class HomeController extends AbstractController
                         }
                     }
                 }
-        
+
                 if (!$userFound) {
                     $this->addFlash('error', 'Adresse mail inexistante');
                 }
@@ -111,7 +111,7 @@ class HomeController extends AbstractController
 
                 foreach ($users as $user) {
                     if ($user['adresseMail'] == $data['email']) {
-                        $apiService->post('comptes_clients', ['client_id'=>$user['id'], 'solde_portefeuille'=>0, 'devise'=>'EUR']);
+                        $apiService->post('comptes_clients', ['client_id' => $user['id'], 'solde_portefeuille' => 0, 'devise' => 'EUR']);
                     }
                 }
 
@@ -128,7 +128,7 @@ class HomeController extends AbstractController
     #[Route('/deconnexion', name: 'app_deconnexion')]
     public function deconnexion(Request $request): Response
     {
-        
+
         $session = $request->getSession();
         $session->remove('user');
 
@@ -142,19 +142,25 @@ class HomeController extends AbstractController
         if (!$session->has('user')) {
             return $this->redirectToRoute('app_home');
         }
-        
-        $solde = $apiService->get("comptes_clients", $session->get('user')['id']);
-        
+
+
+        $comptes = $apiService->get('comptes_clients');
+
+        foreach ($comptes as $compte) {
+
+            if ($compte['client']['id'] == $session->get('user')['id']) {
+                $solde = $compte;
+            }
+        }
+
         if ($request->isMethod('POST')) {
             $montant = floatval($request->request->get('montant'));
             $devise = $request->request->get('devise');
-    
             $putData = [
                 'solde_portefeuille' => $montant,
                 'devise' => $devise,
             ];
-    
-            $apiService->put("comptes_clients", $session->get('user')['id'], $putData);
+            $apiService->put("comptes_clients", $solde['id'], $putData);
             return $this->redirectToRoute('app_compte');
         }
 
@@ -165,13 +171,13 @@ class HomeController extends AbstractController
         $userReservations = array_filter($reservations, function ($reservation) use ($userId) {
             return $reservation['client']['id'] === $userId;
         });
-        
+
         foreach ($userReservations as $reservation) {
             if (isset($reservation['reservation']) && isset($reservation['chambre'])) {
                 $reservation['reservation']['chambre'] = $reservation['chambre'];
             }
         }
-        
+
         $chambresReservees = $apiService->get("chambres_reservees");
 
         foreach ($userReservations as &$reservation) {
@@ -183,7 +189,7 @@ class HomeController extends AbstractController
             }
         }
         unset($reservation);
-    
+
         return $this->render('home/compte.html.twig', [
             'controller_name' => 'HomeController',
             'solde' => $solde,
