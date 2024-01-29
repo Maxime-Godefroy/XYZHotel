@@ -1,0 +1,32 @@
+{% block body %}
+
+    {% include 'header.html.twig' %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center mb-4">Réservation</h2>
+                
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger text-center mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.date_checkin, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.date_checkin, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.nombre_nuits, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nombre_nuits, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="d-grid gap-2 mx-auto">
+                        <button type="submit" class="btn btn-primary">Réserver</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

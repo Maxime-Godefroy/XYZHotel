@@ -38,13 +38,7 @@
                 <th scope="col">Date de réservation</th>
                 <th scope="col">Nombre(s) de nuits(s)</th>
                 <th scope="col">Statut</th>
-                {% set showActions = false %}
-                {% for reservation in userReservations %}
-                    {% if reservation.statut != 'Confirmé' %}
-                        {% set showActions = true %}
-                        <th scope="col">Action</th>
-                    {% endif %}
-                {% endfor %}
+                <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -62,16 +56,21 @@
                     <td>{{ reservation.dateCheckin|date('d-m-Y') }}</td>
                     <td>{{ reservation.nombreNuits }}</td>
                     <td>{{ reservation.statut }}</td>
-                    {% if showActions %}
-                        {% if reservation.statut != 'Confirmé' %}
-                            <td>
-                                <form method="post" action="{{ path('app_confirm_reservation', {'id': reservation.id}) }}">
-                                    <button type="submit" class="btn btn-primary">Confirmer</button>
-                                </form>
-                            </td>
-                        {% else %}
-                            <td></td>
-                        {% endif %}
+                    {% if reservation.statut != 'Confirmé' %}
+                        <td>
+                            <form method="post" action="{{ path('app_confirm_reservation', {'id': reservation.id}) }}">
+                                <button type="submit" class="btn btn-primary w-100">Confirmer</button>
+                            </form>
+                            <form method="post" action="{{ path('app_remove_reservation', {'id': reservation.id}) }}">
+                                <button type="submit" class="btn btn-primary w-100">Annuler</button>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td>
+                            <form method="post" action="{{ path('app_remove_reservation', {'id': reservation.id}) }}">
+                                <button type="submit" class="btn btn-primary w-100">Annuler</button>
+                            </form>
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}

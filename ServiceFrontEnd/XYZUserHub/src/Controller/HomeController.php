@@ -191,10 +191,17 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/compte_confirm/{id}', name: 'app_confirm_reservation', methods: ['POST'])]
+    #[Route('/compte_confirm_reservation/{id}', name: 'app_confirm_reservation', methods: ['POST'])]
     public function confirm($id, ApiService $apiService)
     {
         $apiService->put("reservations_confirmer", $id);
+        return $this->redirectToRoute('app_compte');
+    }
+
+    #[Route('/compte_remove_reservation/{id}', name: 'app_remove_reservation', methods: ['POST'])]
+    public function remove($id, ApiService $apiService)
+    {
+        $apiService->delete("reservations_annuler", $id);
         return $this->redirectToRoute('app_compte');
     }
 }

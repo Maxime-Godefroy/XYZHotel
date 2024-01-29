@@ -9,7 +9,7 @@
                 <div class="col p-4 d-flex flex-column position-static">
                     <h1 class="display-4 fst-italic">{{ item.categorie }}</h1>
                     <p class="lead my-3">{{ item.caracteristiques }}</p>
-                    <p class="lead mb-0"><a href="" class="text-body fw-bold">Réserver</a></p>
+                    <p class="lead mb-0"><a href="{{ path('app_reservation', {'id': item.id}) }}" class="text-body fw-bold">Réserver</a></p>
                 </div>
             </div>
         {% endfor %}

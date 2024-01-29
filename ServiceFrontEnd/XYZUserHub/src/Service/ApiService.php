@@ -74,4 +74,27 @@ class ApiService
 
         return null;
     }
+
+    public function delete($route, $id, $data = [])
+    {
+        $url = $this->url . $route . "/" . $id;
+
+        $requestOptions = [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ];
+
+        if (!empty($data)) {
+            $requestOptions['body'] = json_encode($data);
+        }
+
+        $response = $this->client->request('DELETE', $url, $requestOptions);
+
+        if ($response->getStatusCode() === 200) {
+            return $response->toArray();
+        }
+
+        return null;
+    }
 }
