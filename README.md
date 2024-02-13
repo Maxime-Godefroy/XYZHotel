@@ -14,6 +14,8 @@ Deuxième Terminal :
 
 ```bash
     cd .\ServiceBackEnd\api\
+    php bin/console doctrine:migrations:migrate
+    php bin/console doctrine:fixtures:load
     symfony serve
 ```
 
