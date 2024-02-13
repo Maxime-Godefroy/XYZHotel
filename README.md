@@ -32,6 +32,7 @@ Quatrième Terminal :
 
 ```bash
     cd .\ServiceFrontEnd\XYZUserHub\
+    npm install
     npm run watch
 ```
     
