@@ -112,9 +112,10 @@ class HomeController extends AbstractController
                 foreach ($users as $user) {
                     if ($user['adresseMail'] == $data['email']) {
                         $apiService->post('comptes_clients', ['client_id' => $user['id'], 'solde_portefeuille' => 0, 'devise' => 'EUR']);
+                
+                        $session->set('user', $user);
                     }
                 }
-
                 return $this->redirectToRoute('app_home');
             }
         }
