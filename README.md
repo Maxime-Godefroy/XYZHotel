@@ -14,6 +14,7 @@ Deuxième Terminal :
 
 ```bash
     cd .\ServiceBackEnd\api\
+    composer require symfony/runtime
     php bin/console doctrine:migrations:migrate
     php bin/console doctrine:fixtures:load
     symfony serve
@@ -25,6 +26,7 @@ Troisième Terminal :
 
 ```bash
     cd .\ServiceFrontEnd\XYZUserHub\
+    composer require symfony/runtime
     symfony serve
 ```
 
